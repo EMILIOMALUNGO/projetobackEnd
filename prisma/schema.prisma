@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Clients {
+  id String @id @default(uuid())
+  nome   String
+  cpf    String  @unique
+  cnpj     String @unique
+  celular String
+  fixo    String
+  rua     String
+  complemento String
+  bairro String
+  cidade String
+  estado String
+  
+  create_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("cliente")
+}
+model User{
+  id String @id @default(uuid())
+  nome String
+  email String
+  senha String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+  //references 
+  movie_rent MovieRent[] @relation ("user")
+
+  @@map("usuarios")
+}
+
+model Movie{
+  id  String @id @default(uuid())
+  titulo  String 
+  duracao  String
+  //data de  lacamento 
+  release_data  DateTime
+  
+  //relacionamento
+   movie_rent MovieRent[] @relation ("movie")
+
+  @@map("Filmes")
+}
+
+
+//relacionamento entre  usuarios e filme 
+//MovieRent esta palavra signifa aluguel de filme 
+
+model MovieRent{
+  //essa linha de baixo signica o relacionamento das tabelas usuarios e filme
+ 
+
+  user    User @relation("user", fields:[userId], references:[id])
+  userId  String
+
+   movie Movie  @relation("movie", fields:[movieId], references:[id])
+   movieId String
+
+   @@id([userId,movieId])
+   @@map("Aluguel de Filmes")
+}
+
+
